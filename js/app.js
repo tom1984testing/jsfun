@@ -78,9 +78,7 @@ $( ".card" ).each( function( index, element ){
 });
 
 function openCard(element) {
-    $(element).addClass("animated fadeIn");
-    $(element).addClass("open show");
-    $(element).removeClass("animated fadeIn");
+    $(element).addClass("animated fadeIn open show");
 }
 
 function hideCard(element) {
