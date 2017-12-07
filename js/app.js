@@ -2,7 +2,7 @@
  * Create a list that holds all of your cards
  */
 
-var allCards = [
+var cards = [
     "fa-diamond","fa-paper-plane-o", "fa-anchor", "fa-bolt",
     "fa-cube", "fa-anchor", "fa-leaf", "fa-bicycle",
     "fa-diamond", "fa-bomb", "fa-leaf", "fa-bomb",
@@ -15,20 +15,8 @@ var allCards = [
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
-shuffle(allCards);
-
-$(".deck").empty();
-$.each( allCards, function(index, value) {
-    var li = $("<li/>", {
-        "class": "card"
-    });
-    var i = $("<i/>", {
-        "class": "fa " + value
-    });
-    li.append(i);
-    $(".deck").append(li);
-});
-
+shuffle(cards);
+displayCards(cards);
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -43,6 +31,21 @@ function shuffle(array) {
     }
 
     return array;
+}
+
+// create card HTML element and show in deck
+function displayCards(cards) {
+    $(".deck").empty();
+    $.each( cards, function(index, value) {
+        var li = $("<li/>", {
+            "class": "card"
+        });
+        var i = $("<i/>", {
+            "class": "fa " + value
+        });
+        li.append(i);
+        $(".deck").append(li);
+    });
 }
 
 /*
@@ -96,7 +99,7 @@ function matchCardFromOpenList(){
     $(openCards[1].element).addClass("match");
     openCards.length = 0;
     matchedCardCount += 2;
-    if(matchedCardCount == allCards.length) {
+    if(matchedCardCount == cards.length) {
         alert("Congratulation!! You total moves are " + moveCount);
     }
 }
@@ -110,10 +113,22 @@ function disMatchCardFromOpenList(){
 function isCardFromOpenListMatch() {
     var index1 = openCards[0].index;
     var index2 = openCards[1].index;
-    return allCards[index1] == allCards[index2];
+    return cards[index1] == cards[index2];
 }
 
 function incrementMoveCount() {
     moveCount++;
     $(".moves").html( moveCount );
 }
+
+/**
+ * Restart the game
+ * - Reset the game cards
+ * - Reset counters: timer, stars, moves
+ */
+$(".restart").click(function(){
+    location.reload();
+})
+
+
+
