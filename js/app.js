@@ -9,7 +9,7 @@ var cards = [
     "fa-bolt", "fa-bicycle", "fa-paper-plane-o", "fa-cube"
     ];
 
-var timer;
+var intervalId = -1;
 var timeUsed = 0;
 var stars = 3;
 
@@ -46,15 +46,18 @@ function displayCards(cards) {
     });
 }
 
+
+// count timer when begin the game
+intervalId = setInterval(countTimer, 1000);
+
 // timing 
 function countTimer(){
     $(".timer").text(timeUsed);
     timeUsed += 1;
-    timer = setTimeout("countTimer()",1000);
 }
 
 function stopCount(){
-    clearTimeout(timer)
+    clearInterval(intervalId)
 }
 
 /*
@@ -77,18 +80,14 @@ $( ".card" ).each( function( index, element ){
         if(!$(element).hasClass("match") && !$(element).hasClass("open") && openCards.length < 2){
             openCard(element);
             addCardToOpenList(index, element);
-            if(openCards.length == 2){
-                setTimeout("doMatch()", 1000);
+            if(openCards.length === 2){
+                setTimeout("doMatch()", 500);
             }
         }
     });
 });
 
 function openCard(element) {
-    // start timing
-    if(timeUsed == 0){
-        countTimer();
-    }
     $(element).addClass("animated fadeIn open show");
 }
 
@@ -99,33 +98,34 @@ function addCardToOpenList(index, element) {
 function doMatch() {
     incrementMoveCount();
     if(isCardFromOpenListMatch()){
-        matchCard(openCards[0].element, openCards[1].element);
+        matchCardFromOpenList();
         matchedCardCount += 2;
         if(matchedCardCount == cards.length){
             gameOver();
         }
     }else{
-        disMatchCard(openCards[0].element, openCards[1].element);
+        disMatchCardFromOpenList();
     }
     clearOpenCards();
 }
 
-function matchCard(element1, element2){
-    $(element1).removeClass("open show");
-    $(element1).addClass("match");
-    $(element2).removeClass("open show");
-    $(element2).addClass("match");
+function matchCardFromOpenList(){
+    $(openCards[0].element).removeClass("fadeIn");
+    $(openCards[0].element).removeClass("open show");
+    $(openCards[0].element).addClass("match animated rubberBand");
+
+    $(openCards[1].element).removeClass("fadeIn");
+    $(openCards[1].element).removeClass("open show");
+    $(openCards[1].element).addClass("match animated rubberBand");
 }
 
-function disMatchCard(element1, element2){
-    $(element1).removeClass("open show");
-    $(element2).removeClass("open show");
+function disMatchCardFromOpenList(){
+    $(openCards[0].element).removeClass("open show");
+    $(openCards[1].element).removeClass("open show");
 }
 
 function isCardFromOpenListMatch() {
-    var index1 = openCards[0].index;
-    var index2 = openCards[1].index;
-    return cards[index1] == cards[index2];
+    return cards[openCards[0].index] === cards[openCards[1].index];
 }
 
 function clearOpenCards() {
@@ -134,23 +134,18 @@ function clearOpenCards() {
 
 function incrementMoveCount() {
     moveCount++;
-    $(".moves").html( moveCount );
+    $(".moves").text( moveCount );
 
-    var t = moveCount >= 30? 1 : moveCount >= 20 ? 2 : 3;
-    if( t != stars ){
-        stars = t;
-        refreshStars();
+    var s = calculateStars();
+    if(s !== stars){
+        $(".stars li").last().remove();
+        stars = s;
     }
 }
 
-//stars
-function refreshStars(){
-    $(".stars").empty();
-    for(var i=1; i<=stars; i++){
-        $(".stars").append($(`<li><i class="fa fa-star"></i></li>`));
-    }
+function calculateStars() {
+    return moveCount >= 20 ? 1 : moveCount >= 15 ? 2 : 3;
 }
-
 
 function gameOver() {
     stopCount();
