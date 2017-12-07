@@ -100,7 +100,7 @@ function doMatch() {
     if(isCardFromOpenListMatch()){
         matchCardFromOpenList();
         matchedCardCount += 2;
-        if(matchedCardCount == cards.length){
+        if(matchedCardCount === cards.length){
             gameOver();
         }
     }else{
