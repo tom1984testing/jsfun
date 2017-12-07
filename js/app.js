@@ -92,15 +92,12 @@ function openCard(element) {
     $(element).addClass("animated fadeIn open show");
 }
 
-function hideCard(element) {
-    $(element).removeClass("open show");
-}
-
 function addCardToOpenList(index, element) {
     openCards.push({index: index,element: element});
 }
 
 function doMatch() {
+    incrementMoveCount();
     if(isCardFromOpenListMatch()){
         matchCard(openCards[0].element, openCards[1].element);
         matchedCardCount += 2;
@@ -110,7 +107,6 @@ function doMatch() {
     }else{
         disMatchCard(openCards[0].element, openCards[1].element);
     }
-    incrementMoveCount();
     clearOpenCards();
 }
 
@@ -158,7 +154,19 @@ function refreshStars(){
 
 function gameOver() {
     stopCount();
-    alert("Congratulation!! You total moves are " + moveCount);
+    $("#dialog-confirm").find("p").html(`Congratulation, you used ${moveCount} moves within ${timeUsed-1} seconds, have won ${stars} stars!!!`);
+    $( "#dialog-confirm" ).dialog({
+      resizable: true,
+      height:300,
+      buttons: {
+        "Replay": function() {
+          restart();
+        },
+        "Close": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
 }
 
 /**
@@ -167,8 +175,12 @@ function gameOver() {
  * - Reset counters: timer, stars, moves
  */
 $(".restart").click(function(){
-    location.reload();
+    restart();
 })
+
+function restart() {
+    location.reload();
+}
 
 
 
