@@ -75,7 +75,6 @@ $( ".card" ).each( function( index, element ){
                     setTimeout(disMatchCardFromOpenList, 1000);
                 }
             }
-            incrementMoveCount();
         }
     });
 });
@@ -97,7 +96,8 @@ function matchCardFromOpenList(){
     $(openCards[0].element).addClass("match");
     $(openCards[1].element).removeClass("open show");
     $(openCards[1].element).addClass("match");
-    openCards.length = 0;
+    incrementMoveCount();
+    clearOpenCards();
     matchedCardCount += 2;
     if(matchedCardCount == cards.length) {
         alert("Congratulation!! You total moves are " + moveCount);
@@ -107,13 +107,18 @@ function matchCardFromOpenList(){
 function disMatchCardFromOpenList(){
     hideCard(openCards[0].element);
     hideCard(openCards[1].element);
-    openCards.length = 0;
+    incrementMoveCount();
+    clearOpenCards();
 }
 
 function isCardFromOpenListMatch() {
     var index1 = openCards[0].index;
     var index2 = openCards[1].index;
     return cards[index1] == cards[index2];
+}
+
+function clearOpenCards() {
+    openCards.length = 0;
 }
 
 function incrementMoveCount() {
