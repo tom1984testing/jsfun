@@ -11,6 +11,7 @@ var cards = [
 
 var timer;
 var timeUsed = 0;
+var stars = 3;
 
 /*
  * Display the cards on the page
@@ -40,13 +41,7 @@ function shuffle(array) {
 function displayCards(cards) {
     $(".deck").empty();
     $.each( cards, function(index, value) {
-        var li = $("<li/>", {
-            "class": "card"
-        });
-        var i = $("<i/>", {
-            "class": "fa " + value
-        });
-        li.append(i);
+        var li = $(`<li class="card"><i class="fa ${value}"></i></li>`);
         $(".deck").append(li);
     });
 }
@@ -109,6 +104,9 @@ function doMatch() {
     if(isCardFromOpenListMatch()){
         matchCard(openCards[0].element, openCards[1].element);
         matchedCardCount += 2;
+        if(matchedCardCount == cards.length){
+            gameOver();
+        }
     }else{
         disMatchCard(openCards[0].element, openCards[1].element);
     }
@@ -141,7 +139,22 @@ function clearOpenCards() {
 function incrementMoveCount() {
     moveCount++;
     $(".moves").html( moveCount );
+
+    var t = moveCount >= 30? 1 : moveCount >= 20 ? 2 : 3;
+    if( t != stars ){
+        stars = t;
+        refreshStars();
+    }
 }
+
+//stars
+function refreshStars(){
+    $(".stars").empty();
+    for(var i=1; i<=stars; i++){
+        $(".stars").append($(`<li><i class="fa fa-star"></i></li>`));
+    }
+}
+
 
 function gameOver() {
     stopCount();
