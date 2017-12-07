@@ -9,6 +9,9 @@ var cards = [
     "fa-bolt", "fa-bicycle", "fa-paper-plane-o", "fa-cube"
     ];
 
+var timer;
+var timeUsed = 0;
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -48,6 +51,17 @@ function displayCards(cards) {
     });
 }
 
+// timing 
+function countTimer(){
+    $(".timer").text(timeUsed);
+    timeUsed += 1;
+    timer = setTimeout("countTimer()",1000);
+}
+
+function stopCount(){
+    clearTimeout(timer)
+}
+
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
@@ -69,17 +83,17 @@ $( ".card" ).each( function( index, element ){
             openCard(element);
             addCardToOpenList(index, element);
             if(openCards.length == 2){
-                if(isCardFromOpenListMatch()){
-                    setTimeout(matchCardFromOpenList, 1000);
-                }else{
-                    setTimeout(disMatchCardFromOpenList, 1000);
-                }
+                setTimeout("doMatch()", 1000);
             }
         }
     });
 });
 
 function openCard(element) {
+    // start timing
+    if(timeUsed == 0){
+        countTimer();
+    }
     $(element).addClass("animated fadeIn open show");
 }
 
@@ -91,24 +105,27 @@ function addCardToOpenList(index, element) {
     openCards.push({index: index,element: element});
 }
 
-function matchCardFromOpenList(){
-    $(openCards[0].element).removeClass("open show");
-    $(openCards[0].element).addClass("match");
-    $(openCards[1].element).removeClass("open show");
-    $(openCards[1].element).addClass("match");
+function doMatch() {
+    if(isCardFromOpenListMatch()){
+        matchCard(openCards[0].element, openCards[1].element);
+        matchedCardCount += 2;
+    }else{
+        disMatchCard(openCards[0].element, openCards[1].element);
+    }
     incrementMoveCount();
     clearOpenCards();
-    matchedCardCount += 2;
-    if(matchedCardCount == cards.length) {
-        alert("Congratulation!! You total moves are " + moveCount);
-    }
 }
 
-function disMatchCardFromOpenList(){
-    hideCard(openCards[0].element);
-    hideCard(openCards[1].element);
-    incrementMoveCount();
-    clearOpenCards();
+function matchCard(element1, element2){
+    $(element1).removeClass("open show");
+    $(element1).addClass("match");
+    $(element2).removeClass("open show");
+    $(element2).addClass("match");
+}
+
+function disMatchCard(element1, element2){
+    $(element1).removeClass("open show");
+    $(element2).removeClass("open show");
 }
 
 function isCardFromOpenListMatch() {
@@ -124,6 +141,11 @@ function clearOpenCards() {
 function incrementMoveCount() {
     moveCount++;
     $(".moves").html( moveCount );
+}
+
+function gameOver() {
+    stopCount();
+    alert("Congratulation!! You total moves are " + moveCount);
 }
 
 /**
